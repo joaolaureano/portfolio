@@ -6,7 +6,7 @@ export async function getStaticPaths() {
   const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
   return projects.map((project, i) => ({
     params: { slug: project.id },
-    props: { project, next: projects[(i + 1) % projects.length] },
+    props: { project, next: projects[i + 1] },
   }));
 }
 
@@ -55,10 +55,14 @@ const kind = { featured: 'Project', app: 'Running in production', lab: 'Lab' }[c
       <Content />
     </div>
 
-    <nav class="next" aria-label="Next project">
-      <span class="faint">Next</span>
-      <a href={`/projects/${next.id}/`}>{next.data.title} →</a>
-    </nav>
+    {
+      next && (
+        <nav class="next" aria-label="Next project">
+          <span class="faint">Next</span>
+          <a href={`/projects/${next.id}/`}>{next.data.title} →</a>
+        </nav>
+      )
+    }
   </article>
 </Base>
 
