@@ -58,9 +58,9 @@ Verification
   Verdict:        IMPROVED
   Objective:      ns/op (cpu)
 
-BENCHMARK              ROLE       UNIT    BASELINE   AFTER   DELTA%         P  VERDICT
-BenchmarkSomeFunction  objective  ns/op     100.50   85.30    -15.2    0.0005  IMPROVED
-BenchmarkSomeFunction  guard      B/op      512.00  512.00      0.0  (1.0000)  NO CHANGE
+BENCHMARK              ROLE       UNIT       BASELINE         AFTER    DELTA%         P  VERDICT
+BenchmarkSomeFunction  objective  ns/op        100.50         85.30     -15.2    0.0005  IMPROVED
+BenchmarkSomeFunction  guard      B/op         512.00        512.00       0.0  (1.0000)  NO CHANGE
 ```
 
 A p-value in parentheses was not significant; only the objective and its guards vote.
