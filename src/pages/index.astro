@@ -20,13 +20,13 @@ const allTags = [...counts.entries()]
 <Base>
   <section class="container hero">
     <div class="photo">
-      <img src={site.avatar} alt={site.name} width="260" height="260" />
+      <img class="glow" src={site.avatar} alt="" aria-hidden="true" width="260" height="260" />
+      <img class="pic" src={site.avatar} alt={site.name} width="260" height="260" />
     </div>
     <div class="intro">
     <h1>{site.name}</h1>
     <p class="role">
-      {site.role} at <a href="https://www.mercadolivre.com.br" target="_blank" rel="noopener">Mercado Livre</a>
-      <span class="sep" aria-hidden="true">·</span>
+      <span class="nowrap">{site.role} at <a href="https://www.mercadolivre.com.br" target="_blank" rel="noopener">Mercado Livre</a></span>{' '}
       <span class="loc">{site.location}</span>
     </p>
     <p class="bio">
@@ -186,25 +186,30 @@ const allTags = [...counts.entries()]
   }
   .photo {
     position: relative;
+    isolation: isolate;
   }
-  /* A soft accent glow behind the photo, offset so it reads as depth, not a frame. */
-  .photo::before {
-    content: '';
+  /* The photo's own colours, blurred into a halo behind it. */
+  .glow {
     position: absolute;
-    inset: 12% -6% -6% 12%;
-    border-radius: 24px;
-    background: linear-gradient(135deg, var(--accent), transparent 70%);
-    opacity: 0.22;
-    filter: blur(18px);
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 22px;
+    filter: blur(38px) saturate(1.8);
+    opacity: 0.55;
+    transform: scale(1.08) translateY(6%);
+    pointer-events: none;
   }
-  .photo img {
+  .pic {
     position: relative;
     width: 100%;
     height: auto;
     aspect-ratio: 1;
     object-fit: cover;
     border-radius: 22px;
-    border: 1px solid var(--border);
+    border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
   }
   h1 {
     margin: 0;
@@ -223,13 +228,14 @@ const allTags = [...counts.entries()]
     font-weight: 500;
     white-space: nowrap;
   }
-  .sep {
-    margin: 0 0.4rem;
-    color: var(--faint);
+  .nowrap {
+    white-space: nowrap;
   }
   .loc {
+    display: block;
+    margin-top: 0.1rem;
+    font-size: 0.95rem;
     color: var(--faint);
-    white-space: nowrap;
   }
   .bio {
     margin: 1.25rem 0 0;
@@ -442,7 +448,8 @@ const allTags = [...counts.entries()]
     .photo {
       width: 9.5rem;
     }
-    .photo img {
+    .pic,
+    .glow {
       border-radius: 18px;
     }
   }

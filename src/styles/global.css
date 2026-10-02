@@ -8,16 +8,16 @@
   --radius: 10px;
 
   /* Dark is the default; light is opt-in through the toggle. */
-  --bg: #09090a;
-  --surface: #111113;
-  --text: #ecebe8;
-  --muted: #a3a09a;
-  --faint: #6f6c67;
-  --border: #222225;
-  --accent: #4fd1bf;
-  --accent-soft: #0f2a27;
-  --tag-bg: #1a1a1d;
-  --tag-text: #c9c5be;
+  --bg: #10151d;
+  --surface: #161c26;
+  --text: #e7eaf0;
+  --muted: #9ba5b4;
+  --faint: #6b7687;
+  --border: #252e3c;
+  --accent: #5fd4c4;
+  --accent-soft: #15333a;
+  --tag-bg: #1c2431;
+  --tag-text: #c4cbd7;
   --shadow: none;
   color-scheme: dark;
 }
