@@ -10,10 +10,13 @@ variable "domain_name" {
   default     = "joaolaureano.dev"
 }
 
-variable "github_repository" {
-  description = "owner/name of the repository allowed to deploy through GitHub Actions."
+# GitHub signs the OIDC subject with immutable ids (owner@id/repo@id), so a
+# rename doesn't silently grant access to whoever takes the old name. Read it
+# from the API: gh api repos/OWNER/REPO/actions/oidc/customization/sub
+variable "github_subject_prefix" {
+  description = "sub_claim_prefix of the repository allowed to deploy."
   type        = string
-  default     = "joaolaureano/portfolio"
+  default     = "repo:joaolaureano@42150235/portfolio@1400982272"
 }
 
 variable "create_github_oidc_provider" {
