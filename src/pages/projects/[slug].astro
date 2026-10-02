@@ -62,6 +62,14 @@ const kind = { featured: 'Project', app: 'Running in production', lab: 'Lab' }[c
   </article>
 </Base>
 
+<script>
+  // External links in the write-up open in a new tab, like the buttons above.
+  for (const a of document.querySelectorAll<HTMLAnchorElement>('.prose a[href^="http"]')) {
+    a.target = '_blank';
+    a.rel = 'noopener';
+  }
+</script>
+
 <style>
   .page {
     padding-top: 2.5rem;
