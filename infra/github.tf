@@ -1,6 +1,7 @@
 # GitHub Actions deploys with short-lived credentials through OIDC: no access
-# key is stored anywhere, and only pushes to main of this repository can
-# assume the role.
+# key is stored anywhere, and only jobs in this repository's production
+# environment can assume the role. Jobs that name an environment get it as the
+# token subject instead of the branch; the environment only accepts main.
 resource "aws_iam_openid_connect_provider" "github" {
   count          = var.create_github_oidc_provider ? 1 : 0
   url            = "https://token.actions.githubusercontent.com"
@@ -34,7 +35,7 @@ data "aws_iam_policy_document" "deploy_trust" {
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:${var.github_repository}:ref:refs/heads/main"]
+      values   = ["repo:${var.github_repository}:environment:production"]
     }
   }
 }
