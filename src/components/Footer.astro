@@ -4,29 +4,146 @@ import { site } from '../data/site';
 const year = new Date().getFullYear();
 ---
 
-<footer class="container">
-  <p>© {year} {site.name}</p>
-  <p>
-    <a href="https://github.com/joaolaureano/portfolio">Source</a>
-    <span aria-hidden="true">·</span>
-    Built with Astro, hosted on AWS
-  </p>
+<footer id="contact" class="container">
+  <p class="title">Contact</p>
+  <p class="lede">Happy to talk about backend, distributed systems or Go.</p>
+
+  <div class="cta">
+    <a class="btn" href={`mailto:${site.email}`}>Get in touch</a>
+    <a class="email mono" href={`mailto:${site.email}`}>{site.email}</a>
+  </div>
+
+  <div class="links">
+    <a href={site.links.github} target="_blank" rel="me noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"
+        ><path
+          d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"
+        ></path></svg
+      >
+      GitHub
+    </a>
+    <a href={site.links.linkedin} target="_blank" rel="me noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"
+        ><rect x="2" y="9" width="4" height="12" rx="1"></rect><circle cx="4" cy="4" r="2"></circle><path
+          d="M10 21V9h3.8v1.8A4.4 4.4 0 0 1 17.5 9c2.8 0 4.5 1.8 4.5 5.2V21h-4v-6.3c0-1.5-.6-2.5-1.9-2.5-1.4 0-2.1 1-2.1 2.5V21z"
+        ></path></svg
+      >
+      LinkedIn
+    </a>
+    <span class="mono location">{site.location}</span>
+  </div>
+
+  <div class="colophon">
+    <span>
+      {`© ${year} ${site.name} · `}<a href="https://github.com/joaolaureano/portfolio" target="_blank" rel="noopener">Source</a>
+    </span>
+    <a class="mark mono" href="/" aria-label="Home">jpl<span>.</span></a>
+  </div>
 </footer>
 
 <style>
   footer {
+    margin-top: 7rem;
+    padding-bottom: 2rem;
+  }
+  .title {
+    margin: 0;
+    font-size: clamp(2rem, 6vw, 2.75rem);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .lede {
+    margin: 0.6rem 0 0;
+    color: var(--muted);
+  }
+  .cta {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 0.5rem 1.5rem;
-    margin-top: 5rem;
-    padding-top: 1.5rem;
-    padding-bottom: 2.5rem;
-    border-top: 1px solid var(--border);
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    margin-top: 1.75rem;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    height: 2.5rem;
+    padding: 0 1.15rem;
+    border-radius: 8px;
+    background: var(--text);
+    color: var(--bg);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .btn:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .email {
+    font-size: 0.875rem;
+    color: var(--muted);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  .email:hover {
+    color: var(--accent);
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin-top: 2.25rem;
+    font-size: 0.9rem;
+  }
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .links a:hover {
+    color: var(--text);
+  }
+  .links svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .location {
+    align-self: center;
     font-size: 0.8rem;
     color: var(--faint);
   }
-  p {
-    margin: 0;
+  .colophon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed var(--border);
+    font-size: 0.8rem;
+    color: var(--faint);
+  }
+  .colophon a {
+    color: inherit;
+  }
+  .colophon a:hover {
+    color: var(--accent);
+  }
+  .mark {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .mark span {
+    color: var(--accent);
   }
 </style>
