@@ -29,7 +29,7 @@ Votes come in over REST and go to Kafka. A Flink job keeps state per voter, so t
 from anyone goes to `votes.rejected` with the receipt of the vote that actually counts. Running
 tallies are published by candidate, state, city and party.
 
-## Guarantees, and the evidence for each
+## Guarantees
 
 | Guarantee | How it was checked |
 |---|---|
@@ -42,7 +42,7 @@ tallies are published by candidate, state, city and party.
 A vote is only confirmed after Kafka's ack (`acks=all`, idempotent producer). A `503` means the
 vote is fine but wasn't recorded; resending is safe, because the duplicate is filtered at tallying.
 
-## Verifiable without trusting the server
+## Inclusion proofs
 
 The Go service seals each time window into an RFC 6962 Merkle tree, the structure behind
 Certificate Transparency, chained to the previous window. With a receipt, the voter gets a proof
@@ -57,7 +57,7 @@ The prefixes prevent a leaf from being forged as an internal node. Profiling thi
 [pprof_advisor](/projects/pprof-advisor/) took proof generation from 14.86 ms to 226 ns on
 100,000 leaves.
 
-## The hard part
+## Watermark stalls
 
 Event-time windows stall without traffic: no new event, no watermark, no sealed window, and a
 voter waits forever for a proof. Advancing time from the wall clock would break reproducibility of

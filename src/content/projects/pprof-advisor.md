@@ -47,7 +47,7 @@ profadvisor verify --baseline <t1>/bench.txt --after <t2>/bench.txt
 | `escape` | Normalizes the compiler's escape analysis. No benchmark needed |
 | `benchgen` | Generates benchmarks and a fuzz target from a frozen corpus, for packages that have none |
 
-## Decisions worth explaining
+## Design decisions
 
 - **Offline by design.** No API key, no vendor, no network. `prompt` prints text; you choose who
   answers, and `apply` takes whatever diff comes back, from a model, a colleague or yourself.
@@ -62,7 +62,7 @@ profadvisor verify --baseline <t1>/bench.txt --after <t2>/bench.txt
 - **"No difference" is the normal outcome.** All three verdicts exit 0. Deleting a branch that
   didn't help costs one cycle and is not a failure.
 
-## Used on a real target
+## Case study: voting_system
 
 I used it on the Merkle service of [voting_system](/projects/voting-system/), on a batch of
 100,000 leaves:
@@ -75,7 +75,7 @@ I used it on the Merkle service of [voting_system](/projects/voting-system/), on
 The tree kept only the leaves and the root, so every proof rebuilt the internal nodes. The
 profile made that obvious; `verify` confirmed the change was real.
 
-## Scope, honestly
+## Limitations
 
 It reads CPU, allocation, block and mutex profiles over `go test -bench`. It does not cover
 traces, and it captures no I/O, network or database latency: a target whose cost lives there

@@ -43,7 +43,7 @@ HTTP. Control messages are text; file data never is.
 Requests the current node doesn't own travel the ring carrying their origin, and stop when they
 come back to it.
 
-## Reliable transfer on unreliable UDP
+## File transfer
 
 Downloads are pull-based and stop-and-wait: one chunk at a time, retried after 500 ms, up to five
 times. Chunks land in a `.part` file, and only after size and MD5 both match is it renamed into
@@ -52,7 +52,7 @@ place. A request carries a hash, never a path, so a peer can only serve files it
 The test suite includes an uploader that **drops every third request**. The download must still
 finish byte-identical.
 
-## From coursework to a real codebase
+## Version 2
 
 The first version was a 2022 assignment for Distributed Systems. Reviewing it years later turned
 up fifteen bugs, among them:

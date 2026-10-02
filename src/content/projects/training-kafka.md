@@ -15,7 +15,7 @@ stats:
     label: dependencies in domain modules
 ---
 
-## The rule
+## Architecture
 
 > The domain doesn't know where or how data is persisted. That's a wiring decision, never a
 > modelling one.
@@ -35,7 +35,7 @@ The order service writes the event to an **outbox** table in the same commit as 
 relay drains it to Kafka in order. A broker outage delays delivery but never loses or reorders it.
 The cost is at-least-once delivery, so the payment service is idempotent by `orderId`.
 
-## What the load test revealed
+## Load testing
 
 On a 4-CPU machine with the whole Saga up, the end-of-run reconciliation between two databases
 and the audit trail added up exactly: 35,641 paid, 17,742 declined, 15 refunded after fraud

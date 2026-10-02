@@ -24,7 +24,7 @@ The product was built in a single semester by a team at
 [AGES](https://tools.ages.pucrs.br/cine-clube/cineclube-wiki), PUCRS's software engineering
 agency. **Everything below is what I added afterwards**, on my own.
 
-## From a single EC2 box to serverless
+## Moving to serverless
 
 The original deployment was one EC2 instance running nginx, the API and Postgres, billed by the
 hour even when idle. Now:
@@ -40,7 +40,7 @@ The handler builds the app outside the invocation to reuse warm containers, and 
 database connection on every call: Neon's pooler closes idle connections, and a container can
 come back warm holding a dead one.
 
-## Authentication that actually authenticates
+## Authentication
 
 What had replaced Firebase verified nothing: the token was base64 JSON built by the client, so
 sending someone's id returned their data. Signing on the frontend wouldn't help, since the key
@@ -50,7 +50,7 @@ would ship in the bundle. Now:
 2. the backend verifies it against Google's JWKS, pinning `audience` and `issuer`;
 3. the backend issues its **own** 8-hour session in an `HttpOnly; Secure; SameSite=Lax` cookie.
 
-## Secrets, and why not environment variables
+## Secrets
 
 Secrets live in SSM Parameter Store as `SecureString`, read once at cold start. Lambda
 environment variables were ruled out on purpose: `lambda:GetFunctionConfiguration` is part of the
