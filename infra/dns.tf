@@ -1,7 +1,11 @@
-# The zone is created here; the registrar only needs to point at its name
-# servers (see the name_servers output). Route 53 Domains does that on its own.
-resource "aws_route53_zone" "site" {
-  name = var.domain_name
+# The domain is registered at Cloudflare, which keeps its DNS, so the records
+# live in the existing Cloudflare zone. They stay DNS-only: CloudFront already
+# terminates TLS with the ACM certificate, and a second proxy in front of it
+# would only get in the way.
+data "cloudflare_zone" "site" {
+  filter = {
+    name = var.domain_name
+  }
 }
 
 resource "aws_acm_certificate" "site" {
@@ -14,44 +18,36 @@ resource "aws_acm_certificate" "site" {
   }
 }
 
-resource "aws_route53_record" "cert_validation" {
+resource "cloudflare_dns_record" "cert_validation" {
   for_each = {
     for o in aws_acm_certificate.site.domain_validation_options : o.domain_name => {
-      name   = o.resource_record_name
+      name   = trimsuffix(o.resource_record_name, ".")
       type   = o.resource_record_type
-      record = o.resource_record_value
+      record = trimsuffix(o.resource_record_value, ".")
     }
   }
 
-  zone_id         = aws_route53_zone.site.zone_id
-  name            = each.value.name
-  type            = each.value.type
-  records         = [each.value.record]
-  ttl             = 300
-  allow_overwrite = true
+  zone_id = data.cloudflare_zone.site.zone_id
+  name    = each.value.name
+  type    = each.value.type
+  content = each.value.record
+  ttl     = 300
+  proxied = false
 }
 
-# Blocks until ACM sees the records, which only happens once the registrar
-# delegates to this zone. Set the name servers first, then apply.
 resource "aws_acm_certificate_validation" "site" {
   certificate_arn         = aws_acm_certificate.site.arn
-  validation_record_fqdns = [for r in aws_route53_record.cert_validation : r.fqdn]
+  validation_record_fqdns = [for r in cloudflare_dns_record.cert_validation : r.name]
 }
 
-resource "aws_route53_record" "alias" {
-  for_each = toset(flatten([
-    for name in [var.domain_name, "www.${var.domain_name}"] : [
-      for type in ["A", "AAAA"] : "${name}|${type}"
-    ]
-  ]))
+# A CNAME at the apex is fine here: Cloudflare flattens it into A/AAAA answers.
+resource "cloudflare_dns_record" "site" {
+  for_each = toset([var.domain_name, "www.${var.domain_name}"])
 
-  zone_id = aws_route53_zone.site.zone_id
-  name    = split("|", each.value)[0]
-  type    = split("|", each.value)[1]
-
-  alias {
-    name                   = aws_cloudfront_distribution.site.domain_name
-    zone_id                = aws_cloudfront_distribution.site.hosted_zone_id
-    evaluate_target_health = false
-  }
+  zone_id = data.cloudflare_zone.site.zone_id
+  name    = each.value
+  type    = "CNAME"
+  content = aws_cloudfront_distribution.site.domain_name
+  ttl     = 1 # automatic
+  proxied = false
 }

@@ -60,23 +60,19 @@ npm run preview   # serves dist/
 
 ## Infrastructure
 
-`infra/` creates the Route 53 zone, an ACM certificate, a private S3 bucket read by CloudFront
-through Origin Access Control, a CloudFront Function for clean URLs and the www redirect, and an
-IAM role GitHub Actions assumes to deploy.
+`infra/` creates an ACM certificate, a private S3 bucket read by CloudFront through Origin Access
+Control, a CloudFront Function for clean URLs and the www redirect, and an IAM role GitHub Actions
+assumes to deploy. The domain is registered at Cloudflare, so its DNS stays there: OpenTofu adds
+the certificate validation and site records to the existing Cloudflare zone, DNS-only.
 
-First deploy, once the domain is registered:
+First deploy, with AWS admin credentials and a Cloudflare API token scoped to
+Zone → DNS → Edit on the zone:
 
 ```sh
 cd infra
 tofu init
-
-# 1. Create only the zone, then set its name servers at the registrar.
-#    (Route 53 Domains does this by itself.)
-tofu apply -target=aws_route53_zone.site
-tofu output name_servers
-
-# 2. Once the delegation is live, create everything else.
-#    Certificate validation waits for DNS, so this can take a few minutes.
+export CLOUDFLARE_API_TOKEN=…
+# Certificate validation waits for DNS, so this can take a few minutes.
 tofu apply
 ```
 
@@ -92,7 +88,7 @@ from `tofu output`:
 From then on every push to `main` builds and deploys. Pull requests only build. A manual deploy
 is `npm run build && S3_BUCKET=… CLOUDFRONT_DISTRIBUTION_ID=… scripts/deploy.sh`.
 
-Running cost: the hosted zone is US$0.50 a month; S3, CloudFront and ACM stay at cents or free.
+Running cost: S3, CloudFront and ACM stay at cents or free; DNS is free at Cloudflare.
 
 ## Analytics
 

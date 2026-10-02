@@ -1,8 +1,3 @@
-output "name_servers" {
-  description = "Set these at the registrar so the domain resolves through this zone."
-  value       = aws_route53_zone.site.name_servers
-}
-
 output "bucket" {
   value = aws_s3_bucket.site.bucket
 }

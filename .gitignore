@@ -9,6 +9,7 @@ infra/.terraform/
 infra/*.tfstate
 infra/*.tfstate.*
 infra/*.tfvars
+infra/tfplan
 
 # CI runs npm ci, which needs the lockfile (overrides the global ignore)
 !package-lock.json

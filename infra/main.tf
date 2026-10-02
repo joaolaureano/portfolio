@@ -6,6 +6,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 5.0"
+    }
   }
 }
 
@@ -23,3 +27,7 @@ provider "aws" {
 }
 
 data "aws_caller_identity" "current" {}
+
+# Reads CLOUDFLARE_API_TOKEN from the environment: a token scoped to
+# Zone > DNS > Edit on this zone only.
+provider "cloudflare" {}
