@@ -41,6 +41,9 @@ Free Markdown: tables, code blocks, links.
 
 The schema lives in `src/content.config.ts`; a missing or mistyped field fails the build.
 
+A ```` ```mermaid ```` block in the body renders as a diagram in the site's colours. Mermaid is
+only downloaded on pages that have one, and diagrams redraw when the theme changes.
+
 Tags used by two or more projects appear in the home page filter. The others show up when
 someone follows a tag link from a project page.
 

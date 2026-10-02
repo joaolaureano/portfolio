@@ -4,7 +4,7 @@ summary: A platform that connects mentors and students, from a 2020 university p
 category: app
 order: 6
 year: 2020 · 2026
-tags: [JavaScript, Node.js, Express, React, PostgreSQL, AWS Lambda, S3, Terraform]
+tags: [JavaScript, Node.js, Express, React, PostgreSQL, AWS, S3, Terraform]
 repo: https://github.com/joaolaureano/rede-de-mentores
 live: https://d1eym4la2wj9yi.cloudfront.net
 ---

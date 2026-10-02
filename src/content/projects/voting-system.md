@@ -17,12 +17,18 @@ stats:
 
 ## The pipeline
 
-```
-POST /votes ─► ingest-api ─► [votes.cast] ─► Flink ─┬─► results by candidate, state, city, party
-                                               dedup └─► [votes.accepted] ─► merkle-service (Go)
-                                                                                   │
-                                                  voting-web ◄── GET /proof/{receipt}
-                                                  (verifies in the browser)
+```mermaid
+flowchart TD
+    V([Voter]) -->|POST /votes| API[ingest-api]
+    API --> CAST[(votes.cast)]
+    API --> REC[(votes.receipts)]
+    CAST --> FL[Flink · one vote per voter]
+    FL --> RES[(tallies by candidate,<br/>state, city, party)]
+    FL --> REJ[(votes.rejected)]
+    FL --> ACC[(votes.accepted)]
+    ACC --> MK[merkle-service · Go]
+    MK --> ROOTS[(merkle.roots)]
+    MK -->|inclusion proof| WEB[voting-web · verified in the browser]
 ```
 
 Votes come in over REST and go to Kafka. A Flink job keeps state per voter, so the second vote

@@ -26,6 +26,33 @@ same consumer runs on in-memory, SQLite or DuckDB adapters.
 
 ## The Saga
 
+
+```mermaid
+sequenceDiagram
+    participant C as Customer
+    participant O as order-service
+    participant K as Kafka
+    participant I as inventory-service
+    participant P as payment-service
+    C->>O: POST /orders
+    O->>O: order + OrderPlaced, one commit (outbox)
+    O-->>C: 202 Accepted
+    O->>K: OrderPlaced
+    K->>I: OrderPlaced
+    alt stock available
+        I->>K: StockReserved
+        K->>O: PENDING_PAYMENT
+        K->>P: StockReserved
+        P->>P: charge, idempotent by orderId
+        P->>K: PaymentApproved or PaymentFailed
+        K->>O: PAID or CANCELLED
+        K->>I: PaymentFailed returns the units
+    else no stock
+        I->>K: StockRejected
+        K->>O: CANCELLED, nothing charged
+    end
+```
+
 An order is born `PENDING_STOCK` and crosses two contexts with no synchronous call, no distributed
 transaction and no shared database. **Reserving comes before charging**, not in parallel: the
 alternative is charging for something that can't be delivered and then refunding it. Rejecting for

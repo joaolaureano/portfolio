@@ -27,6 +27,20 @@ and lets **one command alone reach a verdict**, from benchmark samples, with a p
 
 ## How it works
 
+
+```mermaid
+flowchart TD
+    C1[capture<br/>baseline profile + bench.txt] --> X[extract<br/>ranked hotspots + source]
+    X -.->|optional| P[prompt<br/>question for a model]
+    P -.-> D[/patch.diff/]
+    X -->|or write it yourself| D
+    D --> A[apply<br/>on a new branch]
+    A --> C2[capture<br/>after]
+    C1 --> V{verify}
+    C2 --> V
+    V --> R[improved · no change · regressed<br/>with delta and p-value]
+```
+
 You point it at a directory and a package. Everything it reports comes from that run.
 
 ```sh

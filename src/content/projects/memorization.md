@@ -5,7 +5,7 @@ category: featured
 order: 4
 year: '2026'
 status: Evolving
-tags: [TypeScript, React, Fastify, PostgreSQL, AWS Lambda, OpenTofu, Spec-Driven Development]
+tags: [TypeScript, React, Fastify, PostgreSQL, AWS, OpenTofu, Spec-Driven Development]
 repo: https://github.com/joaolaureano/memorization
 live: https://d2mp2j3zeufjr0.cloudfront.net
 stats:
@@ -44,6 +44,16 @@ verification over assertion, honest minimal scope, secrets never in the reposito
 for every requirement and a requirement for every test.
 
 ## Architecture
+
+
+```mermaid
+flowchart TD
+    U([Browser]) -->|HTTPS| CF[CloudFront]
+    CF -->|/ and assets| S3[(S3<br/>React SPA)]
+    CF -->|/api/* + origin secret| L[Lambda<br/>Fastify API]
+    L -->|secrets on cold start| SSM[SSM Parameter Store]
+    L -->|verified TLS| DB[(Neon<br/>PostgreSQL)]
+```
 
 - **One API, two runtimes.** The same Fastify app runs locally on SQLite and in the cloud on
   PostgreSQL (Neon), behind a storage port with two real adapters.

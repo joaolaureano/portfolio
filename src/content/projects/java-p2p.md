@@ -18,6 +18,18 @@ stats:
 
 ## What it does
 
+
+```mermaid
+flowchart LR
+    SN1[super-node 1<br/>:9000] --> SN2[super-node 2<br/>:9001]
+    SN2 --> SN3[super-node 3<br/>:9002]
+    SN3 --> SN1
+    alice([peer alice]) --> SN1
+    bob([peer bob]) --> SN3
+    bob -. meta / chunk requests .-> alice
+    alice -. file chunks .-> bob
+```
+
 Peers join a ring of super-nodes, share any file in a folder, and download each other's files
 chunk by chunk over UDP. The ring stores only *who has what*; file content always travels
 directly between peers.

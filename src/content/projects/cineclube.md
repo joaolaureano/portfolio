@@ -4,7 +4,7 @@ summary: A movie recommender shaped like a card deck that learns your taste from
 category: app
 order: 5
 year: '2026'
-tags: [TypeScript, React, Express, TypeORM, PostgreSQL, AWS Lambda, CloudFront, OAuth]
+tags: [TypeScript, React, Express, TypeORM, PostgreSQL, AWS, CloudFront, OAuth]
 repo: https://github.com/joaolaureano/cineclube
 live: https://d2kx9b3q7xdr4o.cloudfront.net
 stats:
@@ -25,6 +25,19 @@ The product was built in a single semester by a team at
 agency. **Everything below is what I added afterwards**, on my own.
 
 ## Moving to serverless
+
+
+```mermaid
+flowchart TD
+    U([Browser]) -->|HTTPS| CF[CloudFront]
+    CF -->|/| S3[(private S3<br/>built SPA)]
+    CF -->|/api/*| FU[Lambda Function URL]
+    FU --> L[Lambda<br/>Express + TypeORM]
+    L -->|TLS| N[(Neon<br/>Postgres)]
+    L --> SSM[SSM Parameter Store]
+    U -.->|id_token| G[Google Identity]
+    L -.->|verifies against JWKS| G
+```
 
 The original deployment was one EC2 instance running nginx, the API and Postgres, billed by the
 hour even when idle. Now:

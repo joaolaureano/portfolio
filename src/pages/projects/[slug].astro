@@ -68,6 +68,87 @@ const kind = { featured: 'Project', app: 'Running in production', lab: 'Lab' }[c
     a.target = '_blank';
     a.rel = 'noopener';
   }
+
+  // ```mermaid blocks become diagrams. The library is only fetched on pages that
+  // have one, takes its colours from the site tokens, and redraws on theme change.
+  const blocks = [...document.querySelectorAll<HTMLPreElement>('.prose pre[data-language="mermaid"]')];
+  if (blocks.length > 0) {
+    const figures = blocks.map((pre) => {
+      const figure = document.createElement('figure');
+      figure.className = 'diagram';
+      figure.dataset.source = pre.textContent ?? '';
+      pre.replaceWith(figure);
+      return figure;
+    });
+
+    const { default: mermaid } = await import('mermaid');
+    const token = (name: string) =>
+      getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+    let run = 0;
+    const draw = async () => {
+      const current = ++run;
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: 'strict',
+        theme: 'base',
+        fontFamily: token('--font-sans'),
+        flowchart: {
+          curve: 'basis',
+          padding: 14,
+          nodeSpacing: 36,
+          rankSpacing: 38,
+          wrappingWidth: 280,
+          useMaxWidth: true,
+        },
+        sequence: {
+          useMaxWidth: true,
+          mirrorActors: false,
+          actorMargin: 28,
+          width: 120,
+          boxMargin: 6,
+          messageMargin: 28,
+        },
+        themeVariables: {
+          fontSize: '14px',
+          background: token('--surface'),
+          primaryColor: token('--tag-bg'),
+          primaryBorderColor: token('--border'),
+          primaryTextColor: token('--text'),
+          secondaryColor: token('--accent-soft'),
+          tertiaryColor: token('--surface'),
+          lineColor: token('--muted'),
+          textColor: token('--muted'),
+          edgeLabelBackground: token('--surface'),
+          clusterBkg: token('--surface'),
+          noteBkgColor: token('--accent-soft'),
+          noteTextColor: token('--text'),
+          noteBorderColor: token('--accent'),
+          actorBkg: token('--tag-bg'),
+          actorBorder: token('--border'),
+          actorTextColor: token('--text'),
+          actorLineColor: token('--border'),
+          signalColor: token('--muted'),
+          signalTextColor: token('--text'),
+          labelBoxBkgColor: token('--accent-soft'),
+          labelTextColor: token('--text'),
+          loopTextColor: token('--muted'),
+          sequenceNumberColor: token('--bg'),
+        },
+      });
+      for (const [i, figure] of figures.entries()) {
+        const { svg } = await mermaid.render(`diagram-${i}-${current}`, figure.dataset.source!);
+        if (current !== run) return;
+        figure.innerHTML = svg;
+      }
+    };
+
+    await draw();
+    new MutationObserver(draw).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+  }
 </script>
 
 <style>
@@ -244,6 +325,18 @@ const kind = { featured: 'Project', app: 'Running in production', lab: 'Lab' }[c
   }
   .prose :global(td) {
     color: var(--muted);
+  }
+  .prose :global(.diagram) {
+    margin: 1.5rem 0;
+    padding: 1.25rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow-x: auto;
+    text-align: center;
+  }
+  .prose :global(.diagram svg) {
+    height: auto;
   }
   .prose :global(hr) {
     margin: 2.5rem 0;
