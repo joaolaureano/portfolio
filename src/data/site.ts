@@ -85,7 +85,7 @@ export const education = [
 
 export const skills: { group: string; items: string[] }[] = [
   { group: 'Languages', items: ['Go', 'Java', 'TypeScript', 'SQL'] },
-  { group: 'Architecture', items: ['Microservices', 'Kafka', 'DDD', 'Ports & Adapters'] },
+  { group: 'Architecture', items: ['Microservices', 'Event-Driven', 'DDD', 'Ports & Adapters'] },
   { group: 'Cloud & ops', items: ['AWS', 'Terraform / OpenTofu', 'Docker'] },
   { group: 'Observability', items: ['Datadog', 'OpenTelemetry', 'Grafana'] },
 ];
