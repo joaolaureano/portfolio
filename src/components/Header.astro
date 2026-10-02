@@ -56,10 +56,7 @@ const nav = [
 
 <script>
   const root = document.documentElement;
-  const dark = () =>
-    root.dataset.theme
-      ? root.dataset.theme === 'dark'
-      : matchMedia('(prefers-color-scheme: dark)').matches;
+  const dark = () => root.dataset.theme !== 'light';
   document.querySelector('.theme-toggle')?.addEventListener('click', () => {
     const next = dark() ? 'light' : 'dark';
     root.dataset.theme = next;
@@ -122,22 +119,14 @@ const nav = [
     background: none;
     cursor: pointer;
   }
-  .moon {
+  .sun {
     display: none;
   }
-  :global(:root[data-theme='dark']) .sun {
-    display: none;
-  }
-  :global(:root[data-theme='dark']) .moon {
+  :global(:root[data-theme='light']) .sun {
     display: block;
   }
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .sun {
-      display: none;
-    }
-    :global(:root:not([data-theme='light'])) .moon {
-      display: block;
-    }
+  :global(:root[data-theme='light']) .moon {
+    display: none;
   }
   @media (max-width: 420px) {
     nav li:nth-child(2) {

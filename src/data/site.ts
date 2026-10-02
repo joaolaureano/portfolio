@@ -4,7 +4,7 @@ export const site = {
   location: 'Porto Alegre, Brazil',
   description:
     'Backend engineer at Mercado Livre. Go services, distributed systems and the tools to measure them.',
-  avatar: 'https://github.com/joaolaureano.png?size=240',
+  avatar: 'https://github.com/joaolaureano.png?size=520',
   email: 'laureano.pedrojoao@gmail.com',
   links: {
     github: 'https://github.com/joaolaureano',

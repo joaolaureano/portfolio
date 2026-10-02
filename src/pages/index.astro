@@ -19,7 +19,10 @@ const allTags = [...counts.entries()]
 
 <Base>
   <section class="container hero">
-    <img class="avatar" src={site.avatar} alt={site.name} width="88" height="88" />
+    <div class="photo">
+      <img src={site.avatar} alt={site.name} width="260" height="260" />
+    </div>
+    <div class="intro">
     <h1>{site.name}</h1>
     <p class="role">
       {site.role} at <a href="https://www.mercadolivre.com.br" target="_blank" rel="noopener">Mercado Livre</a>
@@ -37,6 +40,7 @@ const allTags = [...counts.entries()]
       <li><a class="btn" href={site.links.linkedin} target="_blank" rel="noopener">LinkedIn ↗</a></li>
       <li><a class="btn" href={site.links.github} target="_blank" rel="noopener">GitHub ↗</a></li>
     </ul>
+    </div>
   </section>
 
   <section id="work" class="container section">
@@ -144,13 +148,12 @@ const allTags = [...counts.entries()]
 
   <section id="contact" class="container section">
     <h2 class="section-title">Contact</h2>
-    <p class="contact-text">
-      Happy to talk about backend engineering, distributed systems or Go, whether it is a role, a
-      project or one of the repos here. Email is the fastest way to reach me.
-    </p>
-    <p class="contact-mail">
-      <a href={`mailto:${site.email}`}>{site.email}</a>
-    </p>
+    <p class="contact-text">Happy to talk about backend, distributed systems or Go.</p>
+    <ul class="contact-links">
+      <li><a href={`mailto:${site.email}`}>Email ↗</a></li>
+      <li><a href={site.links.linkedin} target="_blank" rel="noopener">LinkedIn ↗</a></li>
+      <li><a href={site.links.github} target="_blank" rel="noopener">GitHub ↗</a></li>
+    </ul>
   </section>
 </Base>
 
@@ -184,14 +187,33 @@ const allTags = [...counts.entries()]
 
 <style>
   .hero {
-    padding-top: 3.5rem;
+    display: grid;
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+    gap: 2.75rem;
+    align-items: center;
+    padding-top: 4rem;
   }
-  .avatar {
-    width: 88px;
-    height: 88px;
-    border-radius: 50%;
+  .photo {
+    position: relative;
+  }
+  /* A soft accent glow behind the photo, offset so it reads as depth, not a frame. */
+  .photo::before {
+    content: '';
+    position: absolute;
+    inset: 12% -6% -6% 12%;
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--accent), transparent 70%);
+    opacity: 0.22;
+    filter: blur(18px);
+  }
+  .photo img {
+    position: relative;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 22px;
     border: 1px solid var(--border);
-    margin-bottom: 1.5rem;
   }
   h1 {
     margin: 0;
@@ -208,6 +230,7 @@ const allTags = [...counts.entries()]
   .role a {
     color: var(--text);
     font-weight: 500;
+    white-space: nowrap;
   }
   .sep {
     margin: 0 0.4rem;
@@ -215,10 +238,10 @@ const allTags = [...counts.entries()]
   }
   .loc {
     color: var(--faint);
+    white-space: nowrap;
   }
   .bio {
-    margin: 1.4rem 0 0;
-    max-width: 38rem;
+    margin: 1.25rem 0 0;
     font-size: 1.05rem;
     color: var(--muted);
   }
@@ -420,18 +443,33 @@ const allTags = [...counts.entries()]
 
   .contact-text {
     margin: 0;
-    max-width: 36rem;
     color: var(--muted);
   }
-  .contact-mail {
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.75rem;
     margin: 1rem 0 0;
-    font-size: clamp(1.1rem, 4vw, 1.4rem);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    overflow-wrap: anywhere;
+    padding: 0;
+    list-style: none;
   }
-  .contact-mail a {
-    text-decoration-color: var(--accent);
+  .contact-links a {
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  @media (max-width: 680px) {
+    .hero {
+      grid-template-columns: 1fr;
+      gap: 1.75rem;
+      padding-top: 2.5rem;
+    }
+    .photo {
+      width: 9.5rem;
+    }
+    .photo img {
+      border-radius: 18px;
+    }
   }
 
   @media (max-width: 560px) {

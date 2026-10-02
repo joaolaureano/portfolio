@@ -263,22 +263,14 @@ const kind = { featured: 'Project', app: 'Running in production', lab: 'Lab' }[c
     letter-spacing: 0.06em;
   }
 
-  /* Shiki dual themes: light by default, dark tokens when the page is dark. */
+  /* Shiki dual themes: dark tokens by default, light ones in the light theme. */
   :global(.astro-code) {
     background-color: var(--surface) !important;
   }
-  :global(:root[data-theme='dark'] .astro-code),
-  :global(:root[data-theme='dark'] .astro-code span) {
+  :global(:root:not([data-theme='light']) .astro-code),
+  :global(:root:not([data-theme='light']) .astro-code span) {
     color: var(--shiki-dark) !important;
     font-style: var(--shiki-dark-font-style) !important;
     font-weight: var(--shiki-dark-font-weight) !important;
-  }
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light']) .astro-code),
-    :global(:root:not([data-theme='light']) .astro-code span) {
-      color: var(--shiki-dark) !important;
-      font-style: var(--shiki-dark-font-style) !important;
-      font-weight: var(--shiki-dark-font-weight) !important;
-    }
   }
 </style>
