@@ -29,7 +29,7 @@ status: Evolving          # optional pill
 tags: [Go, HTTP, Concurrency]
 repo: https://github.com/joaolaureano/go-router
 live: https://example.com # optional
-stats:                    # optional, up to 3 on the card
+stats:                    # optional, shown at the top of the project page
   - value: '0'
     label: runtime dependencies
 ---
