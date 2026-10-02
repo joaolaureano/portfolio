@@ -5,7 +5,7 @@ category: featured
 order: 4
 year: '2026'
 status: Evolving
-tags: [TypeScript, React, Fastify, PostgreSQL, AWS Lambda, OpenTofu, Playwright, Spec-Driven Development]
+tags: [TypeScript, React, Fastify, PostgreSQL, AWS Lambda, OpenTofu, Spec-Driven Development]
 repo: https://github.com/joaolaureano/memorization
 live: https://d2mp2j3zeufjr0.cloudfront.net
 stats:
