@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+.env
+.env.*
+# infra
+infra/.terraform/
+infra/*.tfstate
+infra/*.tfstate.*
+infra/*.tfvars
+
+# CI runs npm ci, which needs the lockfile (overrides the global ignore)
+!package-lock.json

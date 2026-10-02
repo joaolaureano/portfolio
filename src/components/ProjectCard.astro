@@ -1,0 +1,176 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  index?: number;
+  compact?: boolean;
+}
+
+const { project, index, compact = false } = Astro.props;
+const { title, summary, tags, repo, live, status, stats, year } = project.data;
+const href = `/projects/${project.id}/`;
+const number = index !== undefined ? String(index + 1).padStart(2, '0') : undefined;
+---
+
+<article class:list={['card', { compact }]} data-tags={tags.join('|')}>
+  <div class="head">
+    <h3>
+      {number && <span class="num mono">{number}</span>}
+      <a class="stretched" href={href}>{title}</a>
+    </h3>
+    <div class="meta mono">
+      {status && <span class="status">{status}</span>}
+      <span>{year}</span>
+    </div>
+  </div>
+
+  <p class="summary">{summary}</p>
+
+  {
+    !compact && stats.length > 0 && (
+      <dl class="stats">
+        {stats.slice(0, 3).map((s) => (
+          <div>
+            <dt>{s.label}</dt>
+            <dd class="mono">{s.value}</dd>
+          </div>
+        ))}
+      </dl>
+    )
+  }
+
+  <ul class="tags">
+    {tags.map((t) => <li class="tag">{t}</li>)}
+  </ul>
+
+  <div class="links">
+    <span class="link-arrow">Read more →</span>
+    {repo && <a class="ext" href={repo} target="_blank" rel="noopener">GitHub ↗</a>}
+    {live && <a class="ext" href={live} target="_blank" rel="noopener">Live ↗</a>}
+  </div>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    padding: 1.35rem 1.4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .card:hover {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  }
+  .card:hover .link-arrow {
+    color: var(--accent);
+  }
+  .card[hidden] {
+    display: none;
+  }
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+  .num {
+    margin-right: 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--faint);
+  }
+  .stretched {
+    text-decoration: none;
+  }
+  .stretched::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    font-size: 0.72rem;
+    color: var(--faint);
+  }
+  .status {
+    padding: 0.05rem 0.45rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .summary {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+    gap: 0.75rem;
+    margin: 0.15rem 0;
+    padding: 0.85rem 0;
+    border-top: 1px dashed var(--border);
+    border-bottom: 1px dashed var(--border);
+  }
+  .stats dt {
+    font-size: 0.72rem;
+    color: var(--faint);
+    line-height: 1.4;
+  }
+  .stats dd {
+    margin: 0.15rem 0 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.1rem;
+    margin-top: 0.15rem;
+  }
+  .ext {
+    position: relative;
+    z-index: 1;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .ext:hover {
+    color: var(--accent);
+  }
+  .compact {
+    padding: 1.1rem 1.2rem;
+    gap: 0.65rem;
+  }
+  .compact h3 {
+    font-size: 1rem;
+  }
+  .compact .summary {
+    font-size: 0.9rem;
+  }
+  @media (max-width: 480px) {
+    .head {
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+</style>

@@ -1,0 +1,448 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { site, experience, education, skills } from '../data/site';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const featured = projects.filter((p) => p.data.category === 'featured');
+const apps = projects.filter((p) => p.data.category === 'app');
+const labs = projects.filter((p) => p.data.category === 'lab');
+
+// Tags ordered by how many projects use them, so the most telling ones come first.
+const counts = new Map<string, number>();
+for (const p of projects) for (const t of p.data.tags) counts.set(t, (counts.get(t) ?? 0) + 1);
+const allTags = [...counts.entries()]
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  .map(([t, n]) => ({ tag: t, minor: n < 2 }));
+---
+
+<Base>
+  <section class="container hero">
+    <img class="avatar" src={site.avatar} alt={site.name} width="88" height="88" />
+    <h1>{site.name}</h1>
+    <p class="role">
+      {site.role} at <a href="https://www.mercadolivre.com.br" target="_blank" rel="noopener">Mercado Livre</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <span class="loc">{site.location}</span>
+    </p>
+    <p class="bio">
+      I build Go services that keep millions of packages moving every day, and I like to measure
+      things before I believe them. Seven years in software: distributed systems, device protocols,
+      sharding, and the incident automation that keeps production quiet. On the side I write small
+      tools for <a href="/projects/pprof-advisor/">profiling Go code</a>{' and '}<a href="/projects/go-router/">routing HTTP</a>.
+    </p>
+    <ul class="cta">
+      <li><a class="btn primary" href={`mailto:${site.email}`}>Get in touch</a></li>
+      <li><a class="btn" href={site.links.linkedin} target="_blank" rel="noopener">LinkedIn ↗</a></li>
+      <li><a class="btn" href={site.links.github} target="_blank" rel="noopener">GitHub ↗</a></li>
+    </ul>
+  </section>
+
+  <section id="work" class="container section">
+    <h2 class="section-title">Work</h2>
+
+    <div class="filter" role="group" aria-label="Filter projects by technology">
+      <button class="tag" type="button" data-tag="" aria-pressed="true">All</button>
+      {
+        allTags.map(({ tag, minor }) => (
+          <button class="tag" type="button" data-tag={tag} data-minor={minor || undefined} aria-pressed="false">
+            {tag}
+          </button>
+        ))
+      }
+    </div>
+    <p class="filter-empty" hidden>No project uses that yet.</p>
+
+    <div class="group" data-group>
+      <h3 class="group-title">Selected projects</h3>
+      <div class="list">
+        {featured.map((p, i) => <ProjectCard project={p} index={i} />)}
+      </div>
+    </div>
+
+    <div class="group" data-group>
+      <h3 class="group-title">Running in production</h3>
+      <p class="group-lede">
+        University projects I came back to and rebuilt end to end: real authentication, serverless
+        hosting on AWS and infrastructure as code.
+      </p>
+      <div class="grid">
+        {apps.map((p) => <ProjectCard project={p} compact />)}
+      </div>
+    </div>
+
+    <div class="group" data-group>
+      <h3 class="group-title">Labs</h3>
+      <p class="group-lede">
+        Architecture studies. The point is the design and what the load test reveals, not the product.
+      </p>
+      <div class="grid">
+        {labs.map((p) => <ProjectCard project={p} compact />)}
+      </div>
+    </div>
+
+    <p class="more">
+      Smaller experiments and coursework live on <a href={site.links.github} target="_blank" rel="noopener">GitHub ↗</a>
+    </p>
+  </section>
+
+  <section id="experience" class="container section">
+    <h2 class="section-title">Experience</h2>
+    <ol class="timeline">
+      {
+        experience.map((job) => (
+          <li class="job">
+            <div class="job-head">
+              <h3>
+                <a href={job.url} target="_blank" rel="noopener">{job.company}</a>
+              </h3>
+              <span class="mono period">{job.period}</span>
+            </div>
+            <p class="blurb">{job.blurb}</p>
+            {job.roles.map((role) => (
+              <div class="role-block">
+                <p class="role-title">
+                  {role.title} <span class="faint">· {job.location}</span>
+                </p>
+                <ul class="bullets">
+                  {role.bullets.map((b) => <li>{b}</li>)}
+                </ul>
+              </div>
+            ))}
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section id="about" class="container section">
+    <h2 class="section-title">Skills & education</h2>
+    <dl class="skills">
+      {
+        skills.map((s) => (
+          <div>
+            <dt>{s.group}</dt>
+            <dd>
+              <ul class="tags">{s.items.map((i) => <li class="tag">{i}</li>)}</ul>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+    <ul class="edu">
+      {
+        education.map((e) => (
+          <li>
+            <span><strong>{e.school}</strong> <span class="faint">· {e.degree}</span></span>
+            <span class="mono period">{e.period}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section id="contact" class="container section">
+    <h2 class="section-title">Contact</h2>
+    <p class="contact-text">
+      Happy to talk about backend engineering, distributed systems or Go, whether it is a role, a
+      project or one of the repos here. Email is the fastest way to reach me.
+    </p>
+    <p class="contact-mail">
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+    </p>
+  </section>
+</Base>
+
+<script>
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('.filter button')];
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-tags]')];
+  const groups = [...document.querySelectorAll<HTMLElement>('[data-group]')];
+  const empty = document.querySelector<HTMLElement>('.filter-empty');
+
+  function apply(tag: string) {
+    for (const b of buttons) b.setAttribute('aria-pressed', String(b.dataset.tag === tag));
+    for (const c of cards) c.hidden = !!tag && !c.dataset.tags!.split('|').includes(tag);
+    let any = false;
+    for (const g of groups) {
+      const visible = [...g.querySelectorAll<HTMLElement>('[data-tags]')].some((c) => !c.hidden);
+      g.hidden = !visible;
+      any ||= visible;
+    }
+    if (empty) empty.hidden = any;
+    const url = new URL(location.href);
+    if (tag) url.searchParams.set('tag', tag);
+    else url.searchParams.delete('tag');
+    history.replaceState(null, '', url);
+  }
+
+  for (const b of buttons) b.addEventListener('click', () => apply(b.dataset.tag ?? ''));
+
+  const initial = new URL(location.href).searchParams.get('tag');
+  if (initial && buttons.some((b) => b.dataset.tag === initial)) apply(initial);
+</script>
+
+<style>
+  .hero {
+    padding-top: 3.5rem;
+  }
+  .avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(1.9rem, 5vw, 2.5rem);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+  .role {
+    margin: 0.5rem 0 0;
+    font-size: 1.05rem;
+    color: var(--muted);
+  }
+  .role a {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .sep {
+    margin: 0 0.4rem;
+    color: var(--faint);
+  }
+  .loc {
+    color: var(--faint);
+  }
+  .bio {
+    margin: 1.4rem 0 0;
+    max-width: 38rem;
+    font-size: 1.05rem;
+    color: var(--muted);
+  }
+  .bio a {
+    color: var(--text);
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    height: 2.35rem;
+    padding: 0 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .btn:hover {
+    border-color: var(--accent);
+  }
+  .btn.primary {
+    background: var(--text);
+    border-color: var(--text);
+    color: var(--bg);
+  }
+  .btn.primary:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+
+  .filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 2rem;
+  }
+  /* Tags used by a single project only show up when selected, e.g. from a project page link. */
+  .filter button[data-minor]:not([aria-pressed='true']) {
+    display: none;
+  }
+  .filter-empty {
+    color: var(--faint);
+  }
+  .group + .group {
+    margin-top: 2.75rem;
+  }
+  .group[hidden] {
+    display: none;
+  }
+  .group-title {
+    margin: 0 0 0.35rem;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .group-lede {
+    margin: 0 0 1rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .group-title + .list {
+    margin-top: 1rem;
+  }
+  .list {
+    display: grid;
+    gap: 1rem;
+  }
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  }
+  .more {
+    margin: 2rem 0 0;
+    font-size: 0.9rem;
+    color: var(--faint);
+  }
+
+  .timeline {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .job {
+    position: relative;
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--border);
+  }
+  .job + .job {
+    margin-top: 0;
+    padding-top: 2rem;
+  }
+  .job::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 0.55rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--accent);
+  }
+  .job + .job::before {
+    top: 2.55rem;
+  }
+  .job-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  .job-head h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  .job-head a {
+    text-decoration: none;
+  }
+  .period {
+    flex-shrink: 0;
+    font-size: 0.78rem;
+    color: var(--faint);
+  }
+  .blurb {
+    margin: 0.1rem 0 0;
+    font-size: 0.875rem;
+    color: var(--faint);
+  }
+  .role-title {
+    margin: 0.9rem 0 0.4rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+  .faint {
+    color: var(--faint);
+    font-weight: 400;
+  }
+  .bullets {
+    margin: 0;
+    padding-left: 1.1rem;
+    color: var(--muted);
+    font-size: 0.925rem;
+  }
+  .bullets li + li {
+    margin-top: 0.4rem;
+  }
+  .bullets li::marker {
+    color: var(--faint);
+  }
+
+  .skills {
+    display: grid;
+    gap: 0.9rem;
+    margin: 0;
+  }
+  .skills > div {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 1rem;
+    align-items: baseline;
+  }
+  .skills dt {
+    font-size: 0.875rem;
+    color: var(--faint);
+  }
+  .skills dd {
+    margin: 0;
+  }
+  .edu {
+    margin: 2rem 0 0;
+    padding: 1.25rem 0 0;
+    list-style: none;
+    border-top: 1px dashed var(--border);
+  }
+  .edu li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    font-size: 0.95rem;
+  }
+  .edu li + li {
+    margin-top: 0.5rem;
+  }
+  .edu strong {
+    font-weight: 600;
+  }
+
+  .contact-text {
+    margin: 0;
+    max-width: 36rem;
+    color: var(--muted);
+  }
+  .contact-mail {
+    margin: 1rem 0 0;
+    font-size: clamp(1.1rem, 4vw, 1.4rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+  }
+  .contact-mail a {
+    text-decoration-color: var(--accent);
+  }
+
+  @media (max-width: 560px) {
+    .skills > div {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+    .job-head,
+    .edu li {
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+  }
+</style>

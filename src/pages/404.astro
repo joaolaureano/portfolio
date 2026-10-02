@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Not found">
+  <section class="container">
+    <p class="code mono">404</p>
+    <h1>This route has no handler.</h1>
+    <p>The page you were looking for does not exist, or it moved.</p>
+    <p><a href="/">← Back home</a></p>
+  </section>
+</Base>
+
+<style>
+  section {
+    padding-top: 5rem;
+  }
+  .code {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.9rem;
+  }
+  h1 {
+    margin: 0.5rem 0 1rem;
+    font-size: 1.8rem;
+    letter-spacing: -0.02em;
+  }
+  p {
+    color: var(--muted);
+  }
+</style>

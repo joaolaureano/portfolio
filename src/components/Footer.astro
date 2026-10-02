@@ -1,0 +1,32 @@
+---
+import { site } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="container">
+  <p>© {year} {site.name}</p>
+  <p>
+    <a href="https://github.com/joaolaureano/portfolio">Source</a>
+    <span aria-hidden="true">·</span>
+    Built with Astro, hosted on AWS
+  </p>
+</footer>
+
+<style>
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    margin-top: 5rem;
+    padding-top: 1.5rem;
+    padding-bottom: 2.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--faint);
+  }
+  p {
+    margin: 0;
+  }
+</style>
