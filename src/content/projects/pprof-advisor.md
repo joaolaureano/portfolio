@@ -38,7 +38,7 @@ flowchart TD
     A --> C2[capture<br/>after]
     C1 --> V{verify}
     C2 --> V
-    V --> R[improved · no change · regressed<br/>with delta and p-value]
+    V --> R[IMPROVED · NO CHANGE · REGRESSED<br/>with delta and p-value]
 ```
 
 You point it at a directory and a package. Everything it reports comes from that run.
@@ -51,13 +51,27 @@ profadvisor capture --dir ~/svc --pkg ./internal/parser/ --count 10
 profadvisor verify --baseline <t1>/bench.txt --after <t2>/bench.txt
 ```
 
+`verify --format text` prints one row per benchmark and metric:
+
+```
+Verification
+  Verdict:        IMPROVED
+  Objective:      ns/op (cpu)
+
+BENCHMARK              ROLE       UNIT    BASELINE   AFTER   DELTA%         P  VERDICT
+BenchmarkSomeFunction  objective  ns/op     100.50   85.30    -15.2    0.0005  IMPROVED
+BenchmarkSomeFunction  guard      B/op      512.00  512.00      0.0  (1.0000)  NO CHANGE
+```
+
+A p-value in parentheses was not significant; only the objective and its guards vote.
+
 | Command | What it does |
 |---|---|
 | `capture` | Runs the benchmark once, keeping the profile and `bench.txt` from the same run |
 | `extract` | Ranks hot functions, filters runtime noise, attaches their source |
 | `prompt` | Renders the extract as a question for a model. Sends nothing |
 | `apply` | Applies a unified diff on a new branch; refuses a dirty tree and rolls back on failure |
-| `verify` | The only command that reaches a verdict: improved, no difference or regressed, per metric |
+| `verify` | The only command that reaches a verdict: `IMPROVED`, `NO CHANGE` or `REGRESSED`, per metric |
 | `escape` | Normalizes the compiler's escape analysis. No benchmark needed |
 | `benchgen` | Generates benchmarks and a fuzz target from a frozen corpus, for packages that have none |
 
@@ -72,8 +86,8 @@ profadvisor verify --baseline <t1>/bench.txt --after <t2>/bench.txt
   `runtime.concatstring2` says the fix is about allocation, not the loop.
 - **One objective flag reaches every stage.** `--profile cpu|memory|mutex|block` selects both
   what is profiled and which metric decides. A memory run still carries `ns/op` as a guard: it
-  can turn a verdict into a regression, never into an improvement.
-- **"No difference" is the normal outcome.** All three verdicts exit 0. Deleting a branch that
+  can turn the verdict into `REGRESSED`, never into `IMPROVED`.
+- **`NO CHANGE` is the normal outcome.** All three verdicts exit 0. Deleting a branch that
   didn't help costs one cycle and is not a failure.
 
 ## Case study: voting_system
