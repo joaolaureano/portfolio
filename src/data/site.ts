@@ -41,7 +41,7 @@ export const experience: Job[] = [
         title: 'Backend Developer',
         period: 'Sep 2022 – now',
         bullets: [
-          'Led a sharding initiative that decoupled the totem services in production: environment setup, a reverse proxy written in Go, ETL scripts for the data load, and a migration monitored on Datadog with stable response times throughout.',
+          'Played an active part in the sharding initiative that decoupled the totem services in production: environment setup, a reverse proxy written in Go, ETL scripts for the data load, and a migration monitored on Datadog with stable response times throughout.',
           'Designed socket-based communication with PLC and PTL devices on the distribution-center floor: a protocol plugin architecture, checksum validation, heartbeats, ACK/NACK handling, goroutine-based multi-module support and configuration changed at runtime.',
           'Build Go services and REST APIs that support millions of daily package deliveries across Brazil, integrating several APIs concurrently, observed with OpenTelemetry, Datadog and New Relic.',
           'Tuned SQL through index management, query rewrites and denormalization; review code and keep automated test coverage at 80–100%.',
