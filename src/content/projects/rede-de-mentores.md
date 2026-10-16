@@ -6,7 +6,26 @@ order: 6
 year: 2020 · 2026
 tags: [JavaScript, Node.js, Express, React, PostgreSQL, AWS, S3, Terraform]
 repo: https://github.com/joaolaureano/rede-de-mentores
-live: https://d1eym4la2wj9yi.cloudfront.net
+live: https://mentores.joaolaureano.dev
+gallery:
+  - src: ../../assets/projects/rede-de-mentores/01-sign-in.png
+    alt: Sign-in page with the Rede de Mentores logo over a photo of the university building
+    caption: Sign in
+  - src: ../../assets/projects/rede-de-mentores/02-areas.png
+    alt: Student home page listing the knowledge areas, from Carreira to Tecnologia, with a search box
+    caption: A student starts from the knowledge areas
+  - src: ../../assets/projects/rede-de-mentores/03-mentorships.png
+    alt: Mentorships available in the Carreira area, each with its mentor, description and next time slots
+    caption: Mentorships in an area, with the mentor and the next time slots
+  - src: ../../assets/projects/rede-de-mentores/04-slots.png
+    alt: A mentorship's page with its dates and times, available slots in blue and taken ones in gray
+    caption: Picking an available slot
+  - src: ../../assets/projects/rede-de-mentores/05-my-mentorships.png
+    alt: Mentor's page listing their mentorships with the next time slots and buttons to delete, view and edit
+    caption: A mentor's own mentorships
+  - src: ../../assets/projects/rede-de-mentores/06-new-mentorship.png
+    alt: New mentorship form with title, description, knowledge areas, online or in person, and weekly day and time
+    caption: Publishing a new mentorship, which an administrator approves before it goes live
 ---
 
 ## The product
@@ -30,4 +49,5 @@ first semester of 2020. The original is preserved under the `v1` tag; what follo
 - **Security fixes.** The API no longer returns password hashes, users can no longer promote
   themselves to administrator, and editing a profile no longer wipes the password.
 - **Ready to try.** A seed populates areas, mentors, mentees and mentorships, so the deployed app
-  isn't empty.
+  isn't empty. Sign in as a student with `mentorado@demo.rededementores.dev` or as a mentor with
+  `mentor@demo.rededementores.dev`, both with the password `demo1234`.
