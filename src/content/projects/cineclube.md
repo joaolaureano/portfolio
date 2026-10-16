@@ -6,7 +6,7 @@ order: 5
 year: '2026'
 tags: [TypeScript, React, Express, TypeORM, PostgreSQL, AWS, CloudFront, OAuth]
 repo: https://github.com/joaolaureano/cineclube
-live: https://d2kx9b3q7xdr4o.cloudfront.net
+live: https://cineclube.joaolaureano.dev
 stats:
   - value: '156'
     label: backend tests
