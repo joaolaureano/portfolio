@@ -1,0 +1,350 @@
+---
+// Screenshot carousel: the active slide with the next one peeking in, faded out.
+// Arrows, keyboard and swipe move it; clicking the active slide opens it larger.
+import type { ImageMetadata } from 'astro';
+import { Image, getImage } from 'astro:assets';
+
+interface Props {
+  items: { src: ImageMetadata; alt: string; caption?: string }[];
+}
+
+const { items } = Astro.props;
+const large = await Promise.all(
+  items.map((item) => getImage({ src: item.src, width: Math.min(item.src.width, 1600), format: 'webp' })),
+);
+const total = items.length;
+---
+
+<section class="gallery" aria-roledescription="carousel" aria-label="Screenshots" data-gallery>
+  <div class="stage">
+    <div class="viewport">
+      <ul class="track">
+        {
+          items.map((item, i) => (
+            <li class="slide" aria-roledescription="slide" aria-label={`${i + 1} of ${total}`} aria-hidden={i !== 0}>
+              <button
+                type="button"
+                class="frame"
+                data-large={large[i].src}
+                data-caption={item.caption ?? ''}
+                aria-label={`Enlarge: ${item.alt}`}
+                tabindex={i === 0 ? 0 : -1}
+              >
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  widths={[480, 720, 1080]}
+                  sizes="(max-width: 48rem) 84vw, 645px"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  draggable="false"
+                />
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <button type="button" class="arrow prev" aria-label="Previous screenshot" disabled>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+    </button>
+    <button type="button" class="arrow next" aria-label="Next screenshot" disabled={total < 2}>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+    </button>
+  </div>
+  <p class="meta">
+    <span class="caption">{items[0]?.caption}</span>
+    <span class="count mono" aria-live="polite">1 / {total}</span>
+  </p>
+
+  <dialog class="lightbox" aria-label="Screenshot">
+    <button type="button" class="close" aria-label="Close">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+    <figure>
+      <img alt="" />
+      <figcaption></figcaption>
+    </figure>
+    <button type="button" class="arrow prev" aria-label="Previous screenshot">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+    </button>
+    <button type="button" class="arrow next" aria-label="Next screenshot">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+    </button>
+  </dialog>
+</section>
+
+<style>
+  .gallery {
+    margin-top: 1.75rem;
+  }
+  .stage {
+    position: relative;
+  }
+  .viewport {
+    overflow: hidden;
+    border-radius: var(--radius);
+    /* The next slide peeks in on the right and fades out. */
+    mask-image: linear-gradient(to right, #000 78%, transparent 100%);
+    touch-action: pan-y;
+  }
+  .gallery[data-edge='end'] .viewport {
+    mask-image: linear-gradient(to left, #000 78%, transparent 100%);
+  }
+  .gallery[data-edge='only'] .viewport {
+    mask-image: none;
+  }
+  .track {
+    --i: 0;
+    --shift: 0%;
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    transform: translateX(calc(var(--i) * (-84% - 1rem) + var(--shift)));
+    transition: transform 450ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .slide {
+    flex: 0 0 84%;
+    opacity: 0.55;
+    transition: opacity 450ms ease;
+  }
+  .slide[aria-hidden='false'] {
+    opacity: 1;
+  }
+  .frame {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+    cursor: zoom-in;
+  }
+  .frame :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    user-select: none;
+  }
+  .frame:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+
+  .arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.25);
+    transform: translateY(-50%);
+    cursor: pointer;
+    transition: opacity 200ms ease, border-color 200ms ease;
+  }
+  .arrow:hover:not(:disabled) {
+    border-color: var(--accent);
+  }
+  .arrow:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .arrow:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .arrow svg {
+    width: 1.1rem;
+    height: 1.1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .stage .prev {
+    left: 0.6rem;
+  }
+  .stage .next {
+    right: 0.6rem;
+  }
+
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0.6rem 0 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .count {
+    flex-shrink: 0;
+    color: var(--faint);
+  }
+
+  .lightbox {
+    width: min(1600px, 96vw);
+    max-width: none;
+    max-height: 96vh;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    overflow: visible;
+  }
+  .lightbox::backdrop {
+    background: rgb(0 0 0 / 0.8);
+  }
+  .lightbox figure {
+    margin: 0;
+  }
+  .lightbox img {
+    display: block;
+    width: 100%;
+    max-height: calc(96vh - 3rem);
+    object-fit: contain;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .lightbox figcaption {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .lightbox .prev {
+    left: 0.75rem;
+  }
+  .lightbox .next {
+    right: 0.75rem;
+  }
+  .close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+  }
+  .close svg {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track,
+    .slide {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  for (const gallery of document.querySelectorAll<HTMLElement>('[data-gallery]')) {
+    const track = gallery.querySelector<HTMLElement>('.track')!;
+    const slides = [...gallery.querySelectorAll<HTMLElement>('.slide')];
+    const frames = [...gallery.querySelectorAll<HTMLButtonElement>('.frame')];
+    const prev = gallery.querySelector<HTMLButtonElement>('.stage .prev')!;
+    const next = gallery.querySelector<HTMLButtonElement>('.stage .next')!;
+    const caption = gallery.querySelector<HTMLElement>('.meta .caption')!;
+    const count = gallery.querySelector<HTMLElement>('.meta .count')!;
+    const dialog = gallery.querySelector<HTMLDialogElement>('.lightbox')!;
+    const bigImage = dialog.querySelector('img')!;
+    const bigCaption = dialog.querySelector('figcaption')!;
+    const last = slides.length - 1;
+    let index = 0;
+
+    const show = (to: number) => {
+      index = Math.max(0, Math.min(last, to));
+      track.style.setProperty('--i', String(index));
+      // The last slide aligns to the right edge, so the previous one peeks in instead.
+      track.style.setProperty('--shift', index === last && last > 0 ? '16%' : '0%');
+      gallery.dataset.edge = last === 0 ? 'only' : index === last ? 'end' : 'start';
+      slides.forEach((slide, i) => slide.setAttribute('aria-hidden', String(i !== index)));
+      frames.forEach((frame, i) => (frame.tabIndex = i === index ? 0 : -1));
+      prev.disabled = index === 0;
+      next.disabled = index === last;
+      caption.textContent = frames[index].dataset.caption ?? '';
+      count.textContent = `${index + 1} / ${slides.length}`;
+      if (dialog.open) fillDialog();
+    };
+
+    const fillDialog = () => {
+      const frame = frames[index];
+      bigImage.src = frame.dataset.large ?? '';
+      bigImage.alt = frame.querySelector('img')?.alt ?? '';
+      bigCaption.textContent = frame.dataset.caption || bigImage.alt;
+    };
+
+    prev.addEventListener('click', () => show(index - 1));
+    next.addEventListener('click', () => show(index + 1));
+    dialog.querySelector('.prev')!.addEventListener('click', () => show(index - 1));
+    dialog.querySelector('.next')!.addEventListener('click', () => show(index + 1));
+    dialog.querySelector('.close')!.addEventListener('click', () => dialog.close());
+    // A click on the backdrop lands on the dialog itself.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    // The active slide opens larger; a peeking slide becomes the active one.
+    frames.forEach((frame, i) =>
+      frame.addEventListener('click', () => {
+        if (moved) return;
+        if (i !== index) return show(i);
+        fillDialog();
+        dialog.showModal();
+      }),
+    );
+
+    gallery.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') show(index - 1);
+      else if (event.key === 'ArrowRight') show(index + 1);
+      else return;
+      event.preventDefault();
+      if (!dialog.open) frames[index].focus({ preventScroll: true });
+    });
+
+    // Swipe: a horizontal drag of more than 40px moves one slide.
+    let startX: number | null = null;
+    let moved = false;
+    const viewport = gallery.querySelector<HTMLElement>('.viewport')!;
+    viewport.addEventListener('pointerdown', (event) => {
+      startX = event.clientX;
+      moved = false;
+    });
+    viewport.addEventListener('pointerup', (event) => {
+      if (startX === null) return;
+      const delta = event.clientX - startX;
+      startX = null;
+      if (Math.abs(delta) > 40) {
+        moved = true;
+        show(index + (delta < 0 ? 1 : -1));
+        setTimeout(() => (moved = false));
+      }
+    });
+
+    show(0);
+  }
+</script>

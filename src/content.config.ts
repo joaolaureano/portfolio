@@ -4,7 +4,7 @@ import { z } from 'astro/zod';
 
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string(),
     summary: z.string(),
     // featured: main work · app: deployed products · lab: architecture studies
@@ -16,6 +16,10 @@ const projects = defineCollection({
     live: z.string().optional(),
     status: z.string().optional(),
     stats: z.array(z.object({ value: z.string(), label: z.string() })).default([]),
+    // Screenshots shown in a carousel between the tags and the buttons.
+    gallery: z
+      .array(z.object({ src: image(), alt: z.string(), caption: z.string().optional() }))
+      .default([]),
   }),
 });
 

@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import Gallery from '../../components/Gallery.astro';
 
 export async function getStaticPaths() {
   const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
@@ -11,7 +12,7 @@ export async function getStaticPaths() {
 }
 
 const { project, next } = Astro.props;
-const { title, summary, tags, repo, live, status, stats, year, category } = project.data;
+const { title, summary, tags, repo, live, status, stats, year, category, gallery } = project.data;
 const { Content } = await render(project);
 const kind = { featured: 'Project', app: 'Running in production', lab: 'Lab' }[category];
 ---
@@ -31,6 +32,8 @@ const kind = { featured: 'Project', app: 'Running in production', lab: 'Lab' }[c
       <ul class="tags">
         {tags.map((t) => <li><a class="tag" href={`/?tag=${encodeURIComponent(t)}#work`}>{t}</a></li>)}
       </ul>
+
+      {gallery.length > 0 && <Gallery items={gallery} />}
 
       <div class="actions">
         {repo && <a class="btn" href={repo} target="_blank" rel="noopener">Source on GitHub ↗</a>}
