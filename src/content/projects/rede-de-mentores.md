@@ -49,5 +49,4 @@ first semester of 2020. The original is preserved under the `v1` tag; what follo
 - **Security fixes.** The API no longer returns password hashes, users can no longer promote
   themselves to administrator, and editing a profile no longer wipes the password.
 - **Ready to try.** A seed populates areas, mentors, mentees and mentorships, so the deployed app
-  isn't empty. Sign in as a student with `mentorado@demo.rededementores.dev` or as a mentor with
-  `mentor@demo.rededementores.dev`, both with the password `demo1234`.
+  isn't empty.
