@@ -6,7 +6,7 @@ order: 4
 year: '2026'
 tags: [TypeScript, React, Fastify, PostgreSQL, AWS, OpenTofu, Spec-Driven Development]
 repo: https://github.com/joaolaureano/memorization
-live: https://d2mp2j3zeufjr0.cloudfront.net
+live: https://memorization.joaolaureano.dev
 gallery:
   - src: ../../assets/projects/memorization/01-home.png
     alt: Home page with a greeting and today's study schedule
