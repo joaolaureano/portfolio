@@ -7,6 +7,19 @@ year: '2026'
 tags: [TypeScript, React, Express, TypeORM, PostgreSQL, AWS, CloudFront, OAuth]
 repo: https://github.com/joaolaureano/cineclube
 live: https://cineclube.joaolaureano.dev
+gallery:
+  - src: ../../assets/projects/cineclube/01-sign-in.png
+    alt: Two phone screens, the sign-in page with the Google button and the preferences page with Drama, Thriller and Romance selected
+    caption: Sign in with Google, then pick the genres you like
+  - src: ../../assets/projects/cineclube/02-deck.png
+    alt: Two phone screens, a movie card with poster, title, year, curator's note and streaming service, and the same card asking whether you liked the movie
+    caption: One movie at a time; marking it as watched asks whether you liked it
+  - src: ../../assets/projects/cineclube/03-lists.png
+    alt: Two phone screens with the want-to-watch list and the watched list, each movie with its streaming service
+    caption: Want-to-watch and watched lists
+  - src: ../../assets/projects/cineclube/04-filters-achievements.png
+    alt: Two phone screens, the filters page with streaming services and tags, and the achievements page with "Que drama!" unlocked
+    caption: Filters by service and tag, and achievements
 stats:
   - value: '156'
     label: backend tests
@@ -16,16 +29,17 @@ stats:
 
 ## The product
 
-One movie at a time, four actions: *already watched*, *want to watch*, *don't want to watch* and
-*undo*. Each choice adds points to the movie's tags, and that running profile ranks what comes
-next. Tag filters, personal lists and achievements ("Que drama!" after five dramas) sit around it.
+You sign in with Google, pick the genres you like and get one movie at a time, with a curator's
+note and where to stream it. Four buttons: *undo*, *not interested*, *want to watch* and *already
+watched*, which asks whether you liked it. Every movie you like adds points to its tags, and that
+running profile ranks what comes next. Filters by streaming service and tag, the two lists and
+achievements ("Que drama!" after five dramas) sit around the deck.
 
 The product was built in a single semester by a team at
 [AGES](https://tools.ages.pucrs.br/cine-clube/cineclube-wiki), PUCRS's software engineering
 agency. **Everything below is what I added afterwards**, on my own.
 
 ## Moving to serverless
-
 
 ```mermaid
 flowchart TD
