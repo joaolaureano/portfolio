@@ -23,8 +23,8 @@ gallery:
 stats:
   - value: '156'
     label: backend tests
-  - value: cents / month
-    label: steady-state cost
+  - value: '0'
+    label: servers to keep running
 ---
 
 ## The product
