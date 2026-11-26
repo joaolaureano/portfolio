@@ -24,3 +24,9 @@ variable "create_github_oidc_provider" {
   type        = bool
   default     = true
 }
+
+variable "permissions_boundary_name" {
+  description = "Permissions boundary of the deploy role: the account-wide ceiling scoped by the role's Project tag."
+  type        = string
+  default     = "project-boundary"
+}

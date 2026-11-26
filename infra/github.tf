@@ -41,8 +41,9 @@ data "aws_iam_policy_document" "deploy_trust" {
 }
 
 resource "aws_iam_role" "deploy" {
-  name               = "${var.project_name}-deploy"
-  assume_role_policy = data.aws_iam_policy_document.deploy_trust.json
+  name                 = "${var.project_name}-deploy"
+  assume_role_policy   = data.aws_iam_policy_document.deploy_trust.json
+  permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/${var.permissions_boundary_name}"
 }
 
 data "aws_iam_policy_document" "deploy" {
